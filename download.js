@@ -1,7 +1,7 @@
 var store = require('app-store-scraper');
 var fs = require('fs');
 var request = require('request');
-
+var count = 1;
 async function downloadPic(src, folder, name) {
     return new Promise(resolve =>
         request(src).pipe(fs.createWriteStream(folder + name)).on('close', function() {
@@ -18,7 +18,8 @@ async function getIcon(collection, category, num) {
             num: num
         })
         for (let i in results) {
-            await downloadPic(results[i].icon, './catpics/', results[i].title + '.jpg');
+            await downloadPic(results[i].icon, './catpics/', count + '.jpg');
+            count++;
         }
     } catch (e) {
         throw e;
@@ -28,7 +29,7 @@ async function start() {
     for (let i in store.category) {
         try {
             console.log("Prossessing " + i)
-            await getIcon(store.collection.TOP_FREE_IOS, store.category[i], 10)
+            await getIcon(store.collection.TOP_FREE_IOS, store.category[i], 30)
         } catch (e) {
             console.error(e)
             continue
@@ -36,9 +37,3 @@ async function start() {
     }
 }
 start()
-
-// .then((results) => {
-//     for (i in results) {
-//         downloadPic(results[i].icon, './catpics/', results[i].title + '.jpg');
-//     }
-// }).catch(console.log);
